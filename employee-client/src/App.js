@@ -14,6 +14,7 @@ function App() {
                     <Route path="/" element={<TableView />}> </Route>
                     <Route path="/employee" element={<TableView />}> </Route>
                     <Route path="/add-employee" element={<AddEmployee />}></Route>
+                    <Route path="/edit-employee/:id" element={<AddEmployee />}></Route>
                 </Routes>
             </div>
         </Router>

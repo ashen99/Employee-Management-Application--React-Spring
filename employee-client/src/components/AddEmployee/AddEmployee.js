@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom'
+import React, {useEffect, useState} from 'react';
+import {useNavigate , useParams} from 'react-router-dom'
 import EmployeeService from "../../Services/EmployeeService";
 
 const AddEmployee = () => {
@@ -8,16 +8,51 @@ const AddEmployee = () => {
     const [email, setEmail] = useState('');
     const [salary, setSalary] = useState('');
     const navigate = useNavigate();
+    const {id} = useParams();
 
-    const saveEmployee = (e) => {
+    const saveOrUpdateEmployee = (e) => {
         e.preventDefault(); //stops refreshing the page
-        const employee = {firstName,lastName,email,salary}
-        EmployeeService.createEmployee(employee).then((response) => {
-            console.log(response.data)
-            navigate('/employee');
+
+        const employee = {firstName, lastName, email, salary}
+        const updateEmployee = {id,firstName, lastName, email, salary}
+
+        if (id) {
+            EmployeeService.updateEmployee(updateEmployee).then((response) => {
+                console.log(updateEmployee)
+                console.log("update triggered")
+                console.log(response.data)
+                navigate('/employee');
+            }).catch(error => {
+                console.log("update triggered")
+                console.log(error)
+            })
+        } else {
+            EmployeeService.createEmployee(employee).then((response) => {
+                console.log(response.data)
+                navigate('/employee');
+            }).catch(error => {
+                console.log(error)
+            })
+        }
+    }
+
+    useEffect(() => {
+        EmployeeService.getEmployeeById(id).then((response) => {
+            setFirstName(response.data.firstName)
+            setLastName(response.data.lastName)
+            setEmail(response.data.email)
+            setSalary(response.data.salary)
         }).catch(error => {
             console.log(error)
         })
+    }, []);
+
+    const tittle = () => {
+        if(id){
+            return <h2 className="text-center"> Update Employee</h2>
+        }else{
+            return <h2 className="text-center"> Add Employee</h2>
+        }
     }
 
     return (
@@ -25,7 +60,9 @@ const AddEmployee = () => {
             <div className="container">
                 <div className="row justify-content-center mt-5">
                     <div className="card col-md-6 offcanvas-md-3 offcanvas-md-3">
-                        <h2 className="text-center">Add Employee</h2>
+                        {
+                            tittle()
+                        }
                         <div className="card-body">
                             <form>
                                 <div className="form-group mb-2">
@@ -72,7 +109,7 @@ const AddEmployee = () => {
                                         onChange={(e) => setSalary(e.target.value)}
                                     />
                                 </div>
-                                <button className="btn btn-success" onClick={(e)=>saveEmployee(e)}>Submit</button>
+                                <button className="btn btn-success" onClick={(e)=>saveOrUpdateEmployee(e)}>Submit</button>
                             </form>
                         </div>
                     </div>

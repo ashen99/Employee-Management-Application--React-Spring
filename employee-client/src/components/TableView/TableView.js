@@ -13,17 +13,27 @@ const TableView = () => {
         // }).catch(error => {
         //     console.log(error)
         // })
-        const fetchData= async () => {
-            const response = await EmployeeService.getAllEmployees();
-            console.log(response.data)
-            setEmployees(response.data)
-        }
         fetchData().catch(console.error)
     }, []);
 
+    const fetchData= async () => {
+        const response = await EmployeeService.getAllEmployees();
+        console.log(response.data)
+        setEmployees(response.data)
+    }
+
+    const deleteEmployee = (id) => {
+        EmployeeService.deleteEmployee(id).then((response) => {
+            console.log(response)
+            fetchData().catch(console.error)
+        }).catch(error => {
+            console.log(error);
+        })
+    }
+
     return (
         <div className="container">
-            <h1 class="text-center">List Employees</h1>
+            <h1 class="text-center">List of Employees</h1>
             <Link to="/add-employee" className="btn btn-primary ">Add Employee</Link>
             <table className="table table-bordered table-striped" style={{marginTop:"30px"}}>
                     <thead>
@@ -45,8 +55,8 @@ const TableView = () => {
                                     <td>{employee.email}</td>
                                     <td>{employee.salary}</td>
                                     <td style={{display: "flex", justifyContent: "space-evenly"}}>
-                                        <button type="button" className="btn btn-primary">Update</button>
-                                        <button type="button" className="btn btn-danger">Delete</button>
+                                        <Link className="btn btn-info" to={`/edit-employee/${employee.id}`}>Update</Link>
+                                        <button type="button" className="btn btn-danger" onClick={() => deleteEmployee(employee.id)}>Delete</button>
                                     </td>
                                 </tr>
                         )
